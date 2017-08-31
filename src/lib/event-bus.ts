@@ -5,7 +5,7 @@ class EventBus extends EventEmitter {
 
   // this.emit('message', payload) if available by default
 
-  addNotification(type, text, options) {
+  addNotification(type: string, text: string, options: {}) {
     const props = _.extend(options, {
       type,
     });

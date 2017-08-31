@@ -33,8 +33,8 @@ export class Pagination extends React.Component<PaginationProps, PaginationState
     this.setState({ isBeingEdited });
   }
 
-  private onPageChange = (page) => {
-    if (this.isValidPage(page)) {
+  private onPageChange = (page?: string | number | boolean) => {
+    if (typeof page === 'number' && this.isValidPage(page)) {
       this.props.onChange(page);
     }
   }
@@ -62,7 +62,7 @@ export class Pagination extends React.Component<PaginationProps, PaginationState
   }
 
   isValidPage(page: string | number | boolean | undefined) {
-    return page >= 1 && page <= this.props.totalPages;
+    return typeof page === 'number' && page >= 1 && page <= this.props.totalPages;
   }
 
   renderCurrentPage() {
@@ -78,7 +78,7 @@ export class Pagination extends React.Component<PaginationProps, PaginationState
           hasFeedbackIcon={false}
           className='pagination-input'
           onValidate={this.isValidPage}
-          value={this.state.dirtyValue}
+          value={String(this.state.dirtyValue)}
           onChange={this.onTextChange}
           onKeyDown={this.onHandleKeyDown}
         />

@@ -16,10 +16,6 @@ interface TabsState {
 }
 
 export class Tabs extends React.Component<TabsProps, TabsState> {
-  static propTypes = {
-
-  }
-
   static defaultProps = {
     align: 'top',
     startTab: 1,
@@ -31,10 +27,10 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
     this.state = {
       activeTab: this.props.startTab,
       tabs: [],
-    };
+    } as TabsState;
   }
 
-  private onSetActiveTab = (tab, index, event) => {
+  private onSetActiveTab = (tab: JSX.Element, index: number, event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
 
     let activeTab;
@@ -47,7 +43,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
     this.setState({activeTab});
   }
 
-  getTabsAlignment(alignment) {
+  getTabsAlignment(alignment?: string) {
     switch (alignment) {
     case 'left':
       return 'tabs-left';

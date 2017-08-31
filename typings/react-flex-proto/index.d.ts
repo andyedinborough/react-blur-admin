@@ -1,21 +1,23 @@
-import * as React from 'react';
+declare module 'react-flex-proto' {
+  import * as React from 'react';
 
-interface ColProps {
-  grow: boolean;
-  shrink: boolean;
-  basis: string;
-  padding: string | number;
-  align: string;
-}
+  interface ColProps {
+    grow?: boolean;
+    shrink?: boolean;
+    basis?: string;
+    padding?: string | number;
+    align?: string;
+  }
 
-declare class Col extends React.Component<ColProps, void> {
+  export class Col extends React.Component<ColProps, {}> {
 
-}
+  }
 
-interface RowProps {
-  align: string;
-}
+  interface RowProps {
+    align?: string;
+  }
 
-declare class Row extends React.Component<RowProps, void> {
+  export class Row extends React.Component<RowProps, {}> {
 
+  }
 }

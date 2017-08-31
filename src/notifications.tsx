@@ -5,6 +5,12 @@ import {Notification} from './notification';
 
 import {eventBus} from './lib/event-bus';
 
+export interface NotificationModel {
+  text: string;
+  props: NotificationsProps;
+  id: string;
+}
+
 interface NotificationsProps {
 	position?: string;
 	newestOnTop?: boolean;
@@ -12,7 +18,10 @@ interface NotificationsProps {
 	preventDuplicates?: boolean;
 }
 
-interface NotificationsState { }
+interface NotificationsState {
+  notifications: NotificationModel[];
+  counter: number;
+}
 
 export class Notifications extends React.Component<NotificationsProps, NotificationsState> {
 
@@ -28,7 +37,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
 
     this.state = {
       counter: 0,
-      notifications: {},
+      notifications: [],
     };
 
     this.addNotification = this.addNotification.bind(this);
@@ -36,12 +45,12 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
     eventBus.on('notification', this.addNotification);
   }
 
-  onClose(notification) {
+  private onClose = (notification: NotificationModel) => {
     const notifications = _.reject(this.state.notifications, { id: notification.id });
     this.setState({notifications});
   }
 
-  addNotification(notification) {
+  addNotification(notification: NotificationModel) {
     let notifications = _.assign({}, this.state.notifications);
     if (!this.props.preventDuplicates || !_.some(this.state.notifications, (note) => {
       return notification.text === note.text;
@@ -50,7 +59,7 @@ export class Notifications extends React.Component<NotificationsProps, Notificat
       notifications[counter] = _.assign({}, notification, { id: this.state.counter });
 
       const ids = _.map(notifications, 'id');
-      if (ids.length >= this.props.maxOpened) {
+      if (ids.length >= (this.props.maxOpened || Notifications.defaultProps.maxOpened)) {
         const oldestId = _.head(ids);
         notifications = _.reject(notifications, { id: oldestId });
       }

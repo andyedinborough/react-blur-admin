@@ -13,7 +13,7 @@ interface NotificationAlertState { }
 
 export class NotificationAlert extends React.Component<NotificationAlertProps, NotificationAlertState> {
 
-  onClick() {
+  private onClick = () => {
     if (this.props.onClick) {
       this.props.onClick();
     }

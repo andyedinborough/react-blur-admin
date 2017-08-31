@@ -13,7 +13,7 @@ interface MessagesAlertState { }
 
 export class MessagesAlert extends React.Component<MessagesAlertProps, MessagesAlertState> {
 
-  onClick() {
+  private onClick = () => {
     if (this.props.onClick) {
       this.props.onClick();
     }

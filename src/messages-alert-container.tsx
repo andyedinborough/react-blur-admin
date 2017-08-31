@@ -20,7 +20,7 @@ export class MessagesAlertContainer extends React.Component<MessagesAlertContain
     };
   }
 
-  onClick() {
+  private onClick = () => {
     this.setState({
       isExpanded: !this.state.isExpanded,
     });

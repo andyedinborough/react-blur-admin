@@ -1,18 +1,16 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 
-import {Select} from './select';
-
-interface Option { value: string | number, label: {} }
+import { Select, SelectOption, SearchDelegate } from './select';
 
 interface EditableSelectProps {
 	onChange: (value: {}) => void;
 	value?: string | number;
 	placeholder?: string;
 	maxHeight?: string;
-	options: Option[];
-	onSearch?: () => void;
-	onRenderValue?: (value: string | number) => {};
+	options: SelectOption[];
+	onSearch?: SearchDelegate;
+	onRenderValue?: (value: string | number) => string | number;
 	disabled?: boolean;
 	isBeingEdited?: boolean;
 }
@@ -42,7 +40,7 @@ export class EditableSelect extends React.Component<EditableSelectProps, Editabl
     }
   }
 
-  onSetEditing(isBeingEdited: boolean) {
+  private onSetEditing = (isBeingEdited: boolean) => {
     if (this.props.disabled) {
       return false;
     }
@@ -50,12 +48,12 @@ export class EditableSelect extends React.Component<EditableSelectProps, Editabl
     return this.setState({isBeingEdited});
   }
 
-  onChange(value: {}) {
+  private onChange = (value: {}) => {
     this.setState({isBeingEdited: false});
     this.props.onChange(value);
   }
 
-  renderValue(option: Option) {
+  renderValue(option: SelectOption) {
     if (this.props.value && this.props.onRenderValue) { // User can format the value how they want it
       return this.props.onRenderValue(this.props.value);
     } else if (option && option.label) { // Otherwise display the label
@@ -72,7 +70,7 @@ export class EditableSelect extends React.Component<EditableSelectProps, Editabl
         <span className={`editable editable-click ${this.props.disabled ? 'disabled' : ''}`} onClick={e => this.onSetEditing(true)}>
           {this.renderValue(option)}
         </span>
-      );
+      ) || null;
     }
 
     return (
@@ -81,9 +79,9 @@ export class EditableSelect extends React.Component<EditableSelectProps, Editabl
           <Select
             isOpen={true}
             {...this.props}
-            onChange={value => this.onChange(value)}
+            onChange={this.onChange}
             onToggleOpen={isOpen => this.onSetEditing(isOpen)}
-            className='editable-has-buttons editable-input'
+            className="editable-has-buttons editable-input"
           />
         </div>
       </form>

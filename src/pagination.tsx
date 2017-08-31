@@ -5,7 +5,7 @@ import {Input} from './input';
 interface PaginationProps {
 	currentPage: number;
 	totalPages: number;
-	onChange: () => void;
+	onChange: (page: number) => void;
 }
 interface PaginationState {
 	isBeingEdited?: boolean;
@@ -29,41 +29,39 @@ export class Pagination extends React.Component<PaginationProps, PaginationState
     }
   }
 
-  onSetEditing(isBeingEdited: boolean) {
+  private onSetEditing = (isBeingEdited: boolean) => {
     this.setState({ isBeingEdited });
   }
 
-  onPageChange(page) {
+  private onPageChange = (page) => {
     if (this.isValidPage(page)) {
       this.props.onChange(page);
     }
   }
 
-  onHandleKeyDown(e) {
+  private onHandleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 27) {
-      return this.onCancelEditing();
+      this.onCancelEditing();
     } else if (e.keyCode === 13) {
-      return this.onSubmit();
+      this.onSubmit();
     }
-
-    return e;
   }
 
-  onCancelEditing() {
+  private onCancelEditing = () => {
     this.setState({isBeingEdited: false, dirtyValue: this.props.currentPage});
   }
 
-  onSubmit() {
+  private onSubmit = () => {
     if (this.isValidPage(this.state.dirtyValue)) {
       this.props.onChange(Number(this.state.dirtyValue));
     }
   }
 
-  onTextChange(event) {
-    this.setState({ dirtyValue: event.currentTarget.value });
+  private onTextChange = (value?: string | number | boolean) => {
+    this.setState({ dirtyValue: parseFloat(String(value)) || 0 });
   }
 
-  isValidPage(page) {
+  isValidPage(page: string | number | boolean | undefined) {
     return page >= 1 && page <= this.props.totalPages;
   }
 
@@ -76,14 +74,14 @@ export class Pagination extends React.Component<PaginationProps, PaginationState
     return (
       <span style={{height: '34px'}}>
         <Input
-          ref='pagination-input'
           autoFocus={true}
           hasFeedbackIcon={false}
           className='pagination-input'
-          onValidate={page => this.isValidPage(page)}
+          onValidate={this.isValidPage}
           value={this.state.dirtyValue}
           onChange={this.onTextChange}
-          onKeyDown={this.onHandleKeyDown} />
+          onKeyDown={this.onHandleKeyDown}
+        />
       </span>
     );
   }

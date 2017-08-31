@@ -1,24 +1,34 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 
-interface SelectOption {
-	value: string | number;
-	label?: {};
+export type ValueType = string | number;
+export type SearchDelegate = (searchValue: string, options: SelectOption[]) => SelectOption[];
+
+export interface SelectOption {
+	value: ValueType;
+	label: string;
 }
 
 interface SelectProps {
+  className?: string;
 	placeholder?: string;
 	maxHeight?: string;
-	onChange?: () => void;
-	onRenderValue?: () => void;
+	onChange?: (value: ValueType) => void;
+	onRenderValue?: (value: ValueType) => ValueType;
 	options: SelectOption[],
-	value?: {};
+	value?: ValueType;
 	isSearchable?: boolean;
 	isOpen?: boolean;
-	onSearch?: () => void;
-	onToggleOpen?: () => void; // used when the parent needs to know that isOpen was toggled
+	onSearch?: SearchDelegate;
+	onToggleOpen?: (isOpen: boolean) => void; // used when the parent needs to know that isOpen was toggled
 }
-interface SelectState { }
+interface SelectState {
+  isOpen?: boolean;
+  visibleOptions: SelectOption[],
+  activeIndex: number;
+  value?: ValueType;
+  searchValue?: string;
+}
 
 export class Select extends React.Component<SelectProps, SelectState> {
 
@@ -28,8 +38,9 @@ export class Select extends React.Component<SelectProps, SelectState> {
     value: '',
     isSearchable: false,
     isOpen: false,
-    onToggleOpen: _.noop,
   }
+
+  private _selectSearch: HTMLElement;
 
   constructor(props: SelectProps) {
     super(props);
@@ -37,9 +48,9 @@ export class Select extends React.Component<SelectProps, SelectState> {
     this.state = {
       value: this.getValue(),
       activeIndex: 0,
-      isOpen: this.props.isOpen,
+      isOpen: props.isOpen,
       searchValue: '',
-      visibleOptions: this.props.options,
+      visibleOptions: props.options,
     };
   }
 
@@ -63,29 +74,35 @@ export class Select extends React.Component<SelectProps, SelectState> {
     this.setState({value: this.getValue(nextProps)});
   }
 
-  onFocus() {
+  private onFocus = () => {
     if (this.state.isOpen && this.props.isSearchable) {
-      this.refs['select-search'].focus();
+      this._selectSearch.focus();
     }
   }
 
-  onToggleOpen() {
-    this.props.onToggleOpen(! this.state.isOpen);
+  private onToggleOpen = () => {
+    const { onToggleOpen } = this.props;
+    if (onToggleOpen) {
+      onToggleOpen(! this.state.isOpen);
+    }
     this.setState({ isOpen: ! this.state.isOpen }, this.onFocus);
   }
 
-  onSetActiveIndex(value) {
+  private onSetActiveIndex = (value: number) => {
     this.setState({activeIndex: value, isOpen: true}, this.onFocus);
   }
 
-  onSelectValue(selectedValue) {
+  private onSelectValue = (selectedValue: ValueType) => {
     const selectedOpt = _.find(this.props.options, { value: selectedValue });
     const value = selectedOpt && selectedOpt.label ? selectedOpt.label : this.props.placeholder;
     this.setState({ isOpen: false, value });
-    this.props.onChange(selectedValue);
+    const { onChange } = this.props;
+    if(onChange) {
+      onChange(selectedValue);
+    }
   }
 
-  onTextSearch(event) {
+  private onTextSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     let visibleOptions;
     const searchValue = event.currentTarget.value;
 
@@ -99,7 +116,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
     this.setState({searchValue, visibleOptions});
   }
 
-  onHandleKeyDown(e) {
+  private onHandleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 27) { // esc
       return this.onToggleOpen();
     } else if (e.keyCode === 13) { // enter
@@ -113,7 +130,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
       }
     } else if (e.keyCode === 40) { // down
       e.preventDefault(); // prevent browser scrolling
-      let activeIndex = this.state.activeIndex + 1;
+      let activeIndex = (this.state.activeIndex || 0) + 1;
       if (activeIndex >= this.state.visibleOptions.length) {
         activeIndex = this.state.visibleOptions.length - 1; // - 1 because the index starts at 0
       }
@@ -141,7 +158,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
     return option && option.label || props.placeholder;
   }
 
-  getVisibleOptions(searchValue) {
+  getVisibleOptions(searchValue: string) {
     if (! searchValue) {
       return this.props.options;
     }
@@ -171,7 +188,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
     return (
       <div className='bs-searchbox'>
         <input
-          ref='select-search'
+          ref={this.getSelectSearchRef}
           type='text'
           className='form-control'
           value={this.state.searchValue}
@@ -181,7 +198,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
     );
   }
 
-  renderOption(option, index, isSelected, isActive) {
+  renderOption(option: SelectOption, index: number, isSelected: string, isActive: string) {
     return (
       <li
         key={index}
@@ -229,7 +246,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
           <button
             type="button"
             className='btn dropdown-toggle btn-default'
-            onClick={e => this.onToggleOpen()}
+            onClick={this.onToggleOpen}
             onKeyDown={this.onHandleKeyDown}>
             {this.renderValue()}
             <span className='bs-caret'>
@@ -243,5 +260,9 @@ export class Select extends React.Component<SelectProps, SelectState> {
         </div>
       </div>
     );
+  }
+
+  private getSelectSearchRef = (selectSearch: HTMLInputElement) => {
+    this._selectSearch = selectSearch;
   }
 }

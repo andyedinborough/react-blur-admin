@@ -21,7 +21,7 @@ export class NotificationsAlert extends React.Component<NotificationsAlertProps,
     };
   }
 
-  onClick() {
+  private onClick = () => {
     this.setState({
       isExpanded: !this.state.isExpanded,
     });

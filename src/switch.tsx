@@ -25,7 +25,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     onChange: _.noop,
   }
 
-  onChange() {
+  private onChange = () => {
     if (this.props.disabled) {
       return false;
     }
@@ -53,7 +53,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
 
   render() {
     return (
-      <div className={`switch-container ${this.props.isOn ? this.props.type : ''} ${this.props.className}`} onClick={e => this.onChange()}>
+      <div className={`switch-container ${this.props.isOn ? this.props.type : ''} ${this.props.className}`} onClick={this.onChange}>
         <div className={`bootstrap-switch ${this.props.disabled ? 'bootstrap-switch-disabled' : ''} bootstrap-switch-wrapper bootstrap-switch-small bootstrap-switch-animate bootstrap-switch-on`}>
          {this.props.isOn ? this.renderOn() : this.renderOff()}
         </div>

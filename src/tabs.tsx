@@ -4,11 +4,16 @@ import * as React from 'react';
 // Components
 import { Panel } from './panel';
 
+type TabType = number | string;
+
 interface TabsProps {
 	align?: string,
-	startTab?: number | string;
+	startTab?: TabType;
 }
-interface TabsState { }
+interface TabsState {
+  activeTab: TabType;
+  tabs: TabType[];
+}
 
 export class Tabs extends React.Component<TabsProps, TabsState> {
   static propTypes = {
@@ -29,7 +34,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
     };
   }
 
-  onSetActiveTab(tab, index, event) {
+  private onSetActiveTab = (tab, index, event) => {
     event.preventDefault();
 
     let activeTab;
@@ -54,7 +59,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
     }
   }
 
-  renderTabs(tabs) {
+  renderTabs(tabs: JSX.Element[]) {
     return _.map(tabs, (tab, index) => {
       let isActive = '';
       if (
@@ -70,7 +75,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
               Second
             </Tab>
           </Tabs>
-         */
+        */
         // Else if startTab is a number, calculate based on the order the tabs are passed in
         isActive = 'active';
       }
@@ -83,7 +88,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
     });
   }
 
-  renderActiveTabBody(tabs) {
+  renderActiveTabBody(tabs: JSX.Element[]) {
     // if this.state.activeTab is a string, try changing if the <Tab>s have a name and if one has a matching name, return it
     let activeTab;
     if (_.isString(this.state.activeTab)) {
@@ -96,7 +101,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
   }
 
   render() {
-    const tabs = _.isArray(this.props.children) ? this.props.children : [this.props.children];
+    const tabs = (_.isArray(this.props.children) ? this.props.children : [this.props.children]) as JSX.Element[];
     const alignment = this.getTabsAlignment(this.props.align);
     const isHorizontal = alignment === '';
 
@@ -104,7 +109,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
       <Panel className={(isHorizontal ? 'horizontal-tabs' : '') + ' tabs-panel'}>
         <div className={alignment}>
           <ul className='nav nav-tabs'>
-           {this.renderTabs(tabs)}
+            {this.renderTabs(tabs)}
           </ul>
 
           <div className='tab-content'>

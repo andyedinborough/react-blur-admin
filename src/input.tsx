@@ -14,10 +14,10 @@ interface InputProps {
 	autoFocus?: boolean;
 	hasFeedbackIcon?: boolean;
 	onValidate?: (value: number | string | boolean) => string | boolean;
-	onKeyDown?: () => void;
+	onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 	defaultChecked?: boolean;
 	value: number | string | boolean;
-	onChange: () => void;
+	onChange: (value?: string | boolean | number) => void;
 	disabled?: boolean;
 	isRounded?: boolean;
 }
@@ -34,6 +34,8 @@ export class Input extends React.Component<InputProps, InputState> {
     onKeyDown: _.noop,
     autoFocus: false,
   }
+
+  private _input: HTMLInputElement;
 
   getValidationResult() {
     if (! this.props.onValidate) {
@@ -54,9 +56,9 @@ export class Input extends React.Component<InputProps, InputState> {
   }
 
   /**
-   * [getFeedback - determine if we should show the feedback icon on the right]
-   * @return {string}
-   */
+  * [getFeedback - determine if we should show the feedback icon on the right]
+  * @return {string}
+  */
   getFeedback() {
     if (! this.props.hasFeedbackIcon) {
       return '';
@@ -65,7 +67,7 @@ export class Input extends React.Component<InputProps, InputState> {
     return 'has-feedback';
   }
 
-  getStatus(status) {
+  getStatus(status: string) {
     return status ? `has-${status}` : '';
   }
 
@@ -103,10 +105,10 @@ export class Input extends React.Component<InputProps, InputState> {
             <input
               type="checkbox"
               disabled={this.props.disabled}
-              checked={this.props.value}
-              onClick={e => this.props.onChange(! this.props.value)}
-              ref='input'
-             />
+              checked={!!this.props.value}
+              onClick={this.handleChange}
+              ref={this.getInputRef}
+            />
             <span>{this.props.label}</span>
           </label>
         </div>
@@ -121,10 +123,10 @@ export class Input extends React.Component<InputProps, InputState> {
           disabled={this.props.disabled}
           type="radio"
           name={this.props.name}
-          value={this.props.value}
+          value={String(this.props.value)}
           defaultChecked={this.props.defaultChecked}
-          onClick={e => this.props.onChange(this.props.value)}
-          ref='input'
+          onClick={this.handleChange}
+          ref={this.getInputRef}
         />
         <span>{this.props.label}</span>
       </label>
@@ -144,10 +146,10 @@ export class Input extends React.Component<InputProps, InputState> {
         autoFocus={this.props.autoFocus}
         className={`form-control ${this.props.isRounded ? 'form-control-rounded' : ''}`}
         key={this.props.id}
-        onChange={this.props.onChange}
+        onChange={this.handleChange}
         onKeyDown={this.props.onKeyDown}
-        value={this.props.value}
-        ref='input'
+        value={String(this.props.value)}
+        ref={this.getInputRef}
       />
     );
   }
@@ -172,7 +174,7 @@ export class Input extends React.Component<InputProps, InputState> {
     );
   }
 
-  renderFeedbackIcon(status) {
+  renderFeedbackIcon(status: string) {
     if (! (status && this.props.hasFeedbackIcon) || this.props.addonRight) {
       return null;
     }
@@ -229,4 +231,10 @@ export class Input extends React.Component<InputProps, InputState> {
       </div>
     );
   }
+
+  private getInputRef = (input: HTMLInputElement) => {
+    this._input = input;
+  }
+
+  private handleChange = () => this.props.onChange(this.props.value);
 }

@@ -1,17 +1,17 @@
 import * as React from 'react';
 
 interface EditableTextProps {
-	onChange: () => void;
+	onChange: (value?: string) => void;
 	isOpen: boolean,
-	onValidate: (value?: {}) => boolean | string,
-	value: {},
+	onValidate: (value?: string) => boolean | string,
+	value: string,
 	hasError?: boolean;
 	errorHelpLabel?: string;
 	placeholder?: string;
 	disabled?: boolean;
 }
 interface EditableTextState {
-	dirtyValue?: {};
+	dirtyValue?: string;
 	isBeingEdited?: boolean;
 }
 
@@ -25,6 +25,8 @@ export class EditableText extends React.Component<EditableTextProps, EditableTex
     placeholder: 'No Value',
     disabled: false,
   }
+
+  private _editInput: HTMLInputElement;
 
   constructor(props: EditableTextProps) {
     super(props);
@@ -41,23 +43,23 @@ export class EditableText extends React.Component<EditableTextProps, EditableTex
     }
   }
 
-  onSetEditing(isBeingEdited) {
+  private onSetEditing = (isBeingEdited: boolean) => {
     if (this.props.disabled) {
       return false;
     }
 
     return this.setState({isBeingEdited}, () => {
       if (this.state.isBeingEdited) {
-        this.refs['edit-input'].focus();
+        this._editInput.focus();
       }
     });
   }
 
-  onCancelEditing() {
+  private onCancelEditing = () => {
     this.setState({isBeingEdited: false, dirtyValue: this.props.value});
   }
 
-  onSubmit() {
+  private onSubmit = () => {
     const validationResult = this.getValidationResult();
     if (validationResult === 'error') {
       return false;
@@ -66,11 +68,11 @@ export class EditableText extends React.Component<EditableTextProps, EditableTex
     return this.props.onChange(this.state.dirtyValue);
   }
 
-  onTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+  private onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     return this.setState({dirtyValue: e.currentTarget.value});
   }
 
-  onHandleKeyDown(e) {
+  private onHandleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 27) { // esc
       return this.onCancelEditing();
     } else if (e.keyCode === 13) { // enter
@@ -130,14 +132,14 @@ export class EditableText extends React.Component<EditableTextProps, EditableTex
             value={this.state.dirtyValue}
             onChange={this.onTextChange}
             onKeyDown={this.onHandleKeyDown}
-            ref='edit-input'
+            ref={this.getEditInputRef}
             className='editable-has-buttons editable-input form-control'
 					/>
           <span className='editable-buttons button-wrapper'>
-            <button type='button' onClick={e => this.onSubmit(status)} className='btn btn-primary btn-with-icon'>
+            <button type='button' onClick={this.onSubmit} className='btn btn-primary btn-with-icon'>
               <i className='fa fa-check'></i>
             </button>
-            <button type='button' onClick={e => this.onCancelEditing()} className='btn btn-default btn-with-icon'>
+            <button type='button' onClick={this.onCancelEditing} className='btn btn-default btn-with-icon'>
               <i className='fa fa-close'></i>
             </button>
           </span>
@@ -145,5 +147,9 @@ export class EditableText extends React.Component<EditableTextProps, EditableTex
         </div>
       </form>
     );
+  }
+
+  private getEditInputRef = (editInput: HTMLInputElement) => {
+    this._editInput = editInput;
   }
 }

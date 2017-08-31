@@ -47,13 +47,13 @@ export class Notification extends React.Component<NotificationProps, Notificatio
     }
   }
 
-  onMouseEnter() {
+  private onMouseEnter = () => {
     if (this.timer) {
       clearTimeout(this.timer);
     }
   }
 
-  onMouseLeave() {
+  private onMouseLeave = () => {
     this.extendedTimer = setTimeout(this.props.onClose, this.props.extendedTimeout);
   }
 
@@ -95,7 +95,7 @@ export class Notification extends React.Component<NotificationProps, Notificatio
     return (
       <div
         className={`toast toast-${this.props.type}`}
-        onClick={this.props.tapToDismiss ? this.props.onClose : null}
+        onClick={this.props.tapToDismiss ? this.props.onClose : undefined}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
       >

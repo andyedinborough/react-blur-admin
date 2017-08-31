@@ -1,3 +1,4 @@
+import 'jest';
 describe('<Notifications/>', function() {
   it('Has default props');
 

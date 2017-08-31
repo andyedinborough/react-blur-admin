@@ -1,4 +1,5 @@
-import React from 'react';
+import 'jest';
+import * as React from 'react';
 import {expect} from 'chai';
 import {mount} from 'enzyme';
 import { noop } from 'lodash';

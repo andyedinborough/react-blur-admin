@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
-import React from 'react';
+import 'jest';
+import * as React from 'react';
 import sinon from 'sinon';
 import {noop} from 'lodash';
 import {expect} from 'chai';

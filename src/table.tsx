@@ -7,7 +7,7 @@ interface TableProps {
 	condense?: boolean;
 	stripe?: boolean;
 	responsive?: boolean;
-	style: React.StyleHTMLAttributes<HTMLTableElement>;
+	style?: React.StyleHTMLAttributes<HTMLTableElement>;
 }
 interface TableState { }
 

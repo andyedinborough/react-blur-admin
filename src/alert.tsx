@@ -5,7 +5,7 @@ interface AlertProps {
   type?: string;
   className?: string;
   isDismissible?: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 }
 interface AlertState { }
 
@@ -15,7 +15,6 @@ export class Alert extends React.Component<AlertProps, AlertState> {
     type: 'success',
     className: '',
     isDismissible: false,
-    onClose: _.noop,
   }
 
   getAlertClass() {
@@ -44,7 +43,7 @@ export class Alert extends React.Component<AlertProps, AlertState> {
     }
     return (
       <button className="toast-close-button" onClick={this.props.onClose}>
-      x
+        &times;
       </button>
     );
   }

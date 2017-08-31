@@ -13,7 +13,7 @@ describe('<Select/>', function() {
       {value: 'two'},
       {value: 'three'},
     ];
-  const component = mount(<Select placeholder='placeholder'isSearchable={true} options={options}/>);
+  const component = mount(<Select placeholder='placeholder' isSearchable={true} options={options}/>);
   it('has an outermost div with form-group class', function() {
     expect(component.find('div.form-group')).to.have.length(1);
   });
@@ -45,15 +45,15 @@ describe('<Select/>', function() {
     expect(component.find('div.bs-searchbox')).to.have.length(1);
   });
   it('is searchable is false, searchbox is not rendered ', function() {
-    const newComponent = mount(<Select placeholder='placeholder' isSearchable={false}/>);
+    const newComponent = mount(<Select placeholder='placeholder' isSearchable={false} />);
     expect(newComponent.find('div.bs-searchbox')).to.have.length(0);
   });
   it('has no options', function() {
-    const newComponent = mount(<Select placeholder='placeholder' isSearchable={false}/>);
+    const newComponent = mount(<Select placeholder='placeholder' isSearchable={false} />);
     expect(newComponent.find('ul-dropdown-menu li')).to.have.length(0);
   });
   it('has a placeholder', function() {
-    const newComponent = mount(<Select placeholder='placeholder' isSearchable={false}/>);
+    const newComponent = mount(<Select placeholder='placeholder' isSearchable={false} />);
     expect(newComponent.find('div.form-group').text()).to.contain('placeholder');
   });
   it('has a maxheight', function() {

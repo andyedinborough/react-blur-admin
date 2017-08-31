@@ -16,8 +16,8 @@ interface InputProps {
 	onValidate?: (value: number | string | boolean) => string | boolean;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 	defaultChecked?: boolean;
-	value: number | string | boolean;
-	onChange: (value?: string | boolean | number) => void;
+	value?: number | string | boolean;
+	onChange?: (value?: string | boolean | number) => void;
 	disabled?: boolean;
 	isRounded?: boolean;
 }
@@ -42,7 +42,7 @@ export class Input extends React.Component<InputProps, InputState> {
       return '';
     }
 
-    const validationResult = this.props.onValidate(this.props.value);
+    const validationResult = this.props.onValidate(this.props.value || '');
 
     if (validationResult === true || validationResult === 'success') {
       return 'success';
@@ -236,5 +236,5 @@ export class Input extends React.Component<InputProps, InputState> {
     this._input = input;
   }
 
-  private handleChange = () => this.props.onChange(this.props.value);
+  private handleChange = () => this.props.onChange && this.props.onChange(this.props.value);
 }

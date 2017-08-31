@@ -12,7 +12,7 @@
     "lint": "node_modules/.bin/eslint --ext js src/",
     "prepublish": "npm run deploy",
     "preversion": "npm run lint && npm run test",
-    "test": "NODE_ENV=test NODE_PATH=. ./node_modules/.bin/mocha test/.setup.js test --recursive"
+    "test": "set NODE_ENV=test NODE_PATH=. ./node_modules/.bin/mocha test/.setup.js test --recursive"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 interface TabProps {
-	title: string;
+	title?: string;
 	onClick: () => void;
 }
 

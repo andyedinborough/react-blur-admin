@@ -6,7 +6,7 @@ export type SearchDelegate = (searchValue: string, options: SelectOption[]) => S
 
 export interface SelectOption {
 	value: ValueType;
-	label: string;
+	label?: string;
 }
 
 interface SelectProps {
@@ -15,7 +15,7 @@ interface SelectProps {
 	maxHeight?: string;
 	onChange?: (value: ValueType) => void;
 	onRenderValue?: (value: ValueType) => ValueType;
-	options: SelectOption[],
+	options?: SelectOption[],
 	value?: ValueType;
 	isSearchable?: boolean;
 	isOpen?: boolean;
@@ -50,7 +50,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
       activeIndex: 0,
       isOpen: props.isOpen,
       searchValue: '',
-      visibleOptions: props.options,
+      visibleOptions: props.options || [],
     };
   }
 
@@ -63,7 +63,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
       this.setState({isOpen: nextProps.isOpen}, this.onFocus);
     }
 
-    if (nextProps.options !== this.props.options) {
+    if (nextProps.options && nextProps.options !== this.props.options) {
       this.setState({visibleOptions: nextProps.options, searchValue: ''});
     }
 
@@ -107,13 +107,13 @@ export class Select extends React.Component<SelectProps, SelectState> {
     const searchValue = event.currentTarget.value;
 
     // Used if the developer needs custom search functionality.
-    if (this.props.onSearch) {
+    if (this.props.onSearch && this.props.options) {
       visibleOptions = this.props.onSearch(searchValue, this.props.options);
     } else {
-      visibleOptions = this.getVisibleOptions(event.currentTarget.value);
+      visibleOptions = this.getVisibleOptions(event.currentTarget.value) || [];
     }
 
-    this.setState({searchValue, visibleOptions});
+    this.setState({ searchValue, visibleOptions });
   }
 
   private onHandleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -164,7 +164,7 @@ export class Select extends React.Component<SelectProps, SelectState> {
     }
 
     return _.filter(this.props.options, option => {
-      return option.label.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1;
+      return option.label && option.label.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1;
     });
   }
 

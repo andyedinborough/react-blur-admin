@@ -1,12 +1,11 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 
 interface SwitchProps {
 	isOn?: boolean;
 	onLabel?: string;
 	offLabel?: string;
-	onChange: () => void;
-	type: 'primary' | 'info' | 'warning' | 'success' | 'danger',
+	onChange?: () => void;
+	type?: 'primary' | 'info' | 'warning' | 'success' | 'danger',
 	className?: string;
 	disabled?: boolean;
 }
@@ -22,7 +21,6 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     type: 'primary',
     className: '',
     disabled: false,
-    onChange: _.noop,
   }
 
   private onChange = () => {
@@ -30,7 +28,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
       return false;
     }
 
-    return this.props.onChange();
+    return this.props.onChange && this.props.onChange();
   }
 
   renderOn() {

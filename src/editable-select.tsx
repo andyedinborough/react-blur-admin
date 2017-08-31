@@ -1,0 +1,92 @@
+import * as _ from 'lodash';
+import * as React from 'react';
+
+import {Select} from './select';
+
+interface Option { value: string | number, label: {} }
+
+interface EditableSelectProps {
+	onChange: (value: {}) => void;
+	value?: string | number;
+	placeholder?: string;
+	maxHeight?: string;
+	options: Option[];
+	onSearch?: () => void;
+	onRenderValue?: (value: string | number) => {};
+	disabled?: boolean;
+	isBeingEdited?: boolean;
+}
+interface EditableSelectState {
+	isBeingEdited?: boolean;
+}
+
+export class EditableSelect extends React.Component<EditableSelectProps, EditableSelectState> {
+
+  static defaultProps = {
+    value: '',
+    placeholder: 'No Value',
+  }
+
+  constructor(props: EditableSelectProps) {
+    super(props);
+    this.state = {
+      isBeingEdited: this.props.isBeingEdited || false,
+    };
+  }
+
+  componentWillReceiveProps(nextProps: EditableSelectProps) {
+    if (nextProps.value !== this.props.value && ! nextProps.hasOwnProperty('isBeingEdited')) {
+      this.setState({isBeingEdited: false});
+    } else if (nextProps.isBeingEdited !== this.props.isBeingEdited) {
+      this.setState({isBeingEdited: nextProps.isBeingEdited});
+    }
+  }
+
+  onSetEditing(isBeingEdited: boolean) {
+    if (this.props.disabled) {
+      return false;
+    }
+
+    return this.setState({isBeingEdited});
+  }
+
+  onChange(value: {}) {
+    this.setState({isBeingEdited: false});
+    this.props.onChange(value);
+  }
+
+  renderValue(option: Option) {
+    if (this.props.value && this.props.onRenderValue) { // User can format the value how they want it
+      return this.props.onRenderValue(this.props.value);
+    } else if (option && option.label) { // Otherwise display the label
+      return option.label;
+    }
+
+    return this.props.placeholder;
+  }
+
+  render() {
+    if (! this.state.isBeingEdited) {
+      const option = _.find(this.props.options, {value: this.props.value});
+      return option && (
+        <span className={`editable editable-click ${this.props.disabled ? 'disabled' : ''}`} onClick={e => this.onSetEditing(true)}>
+          {this.renderValue(option)}
+        </span>
+      );
+    }
+
+    return (
+      <form className='form-inline editable-wrap editable-text' role='form' onSubmit={e => e.preventDefault()}>
+        <div className='editable-controls form-group'>
+          <Select
+            isOpen={true}
+            {...this.props}
+            onChange={value => this.onChange(value)}
+            onToggleOpen={isOpen => this.onSetEditing(isOpen)}
+            className='editable-has-buttons editable-input'
+          />
+        </div>
+      </form>
+    );
+  }
+}

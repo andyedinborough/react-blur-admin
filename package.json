@@ -32,6 +32,8 @@
     "react": ">=0.14.0"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.74",
+    "@types/react": "^16.0.5",
     "babel-cli": "^6.9.0",
     "classnames": "^2.2.5",
     "lodash": "^4.7.0",
